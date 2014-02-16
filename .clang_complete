@@ -1,0 +1,5 @@
+-ID:/devtools/cpp-netlib/include/
+-ID:/devtools/boost_1_55_0/include/boost-1_55
+-fnoms-compatibility
+-fdelayed-template-parsing
+-DBOOST_PP_CONFIG_FLAGS=1
