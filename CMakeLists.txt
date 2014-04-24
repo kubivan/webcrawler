@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-set(BOOST_ROOT "D:/devtools/boost_1_55_0")
+set(BOOST_ROOT "~/devtools/boost_1_55_0")
 set(Boost_USE_STATIC_LIBS   ON)
 set(Boost_USE_MULTITHREADED ON)
 FIND_PACKAGE (Boost 1.55.0 COMPONENTS
@@ -11,19 +11,23 @@ FIND_PACKAGE (Boost 1.55.0 COMPONENTS
   regex
   REQUIRED)
 
-message (STATUS ${BOOST_LIBRARYDIR})
+find_package(OpenSSL)
+message(STATUS ${OPENSSL_LIBRARIES})
+#cppnetlib
+set(cppnetlib_DIR "~/devtools/cpp-netlib-0.11.0-final-build/install")
+set(CPPNETLIB_INCLUDE_DIRS ${cppnetlib_DIR}/include )
+find_library(cppnetlib_uri NAMES cppnetlib-uri PATHS ${cppnetlib_DIR}/lib)
+find_library(cppnetlib_client NAMES cppnetlib-client-connections cppnetlib-uri cppnetlib-server-parsers PATHS ${cppnetlib_DIR}/lib)
+find_library(cppnetlib_server NAMES cppnetlib-server-parsers PATHS ${cppnetlib_DIR}/lib)
+set(CPPNETLIB_LIBRARIES ${cppnetlib_client} ${cppnetlib_uri} ) #${cppnetlib_server})
 
-find_package(cppnetlib REQUIRED)
-include_directories (${Boost_INCLUDE_DIR})
-include_directories (${CPPNETLIB_INCLUDE_DIRS})
-include_directories ("D:/devtools/rapidxml-1.13")
-message (STATUS ${CPPNETLIB_INCLUDE_DIRS})
-add_executable(webcrawler webcrawler.cpp)
+#gumbo_parser
+set(gumbo_DIR "~/devtools/gumbo-parser/install/")
+set(gumbo_INCLUDE_DIRS ${gumbo_DIR}/include/)
+find_library(gumbo_LIBRARIES gumbo ${gumbo_DIR}/lib)
 
-message (STATUS ${CPPNETLIB_LIBRARIES})
-# message (STATUS ${Boost_LIBRARIES})
-target_link_libraries( webcrawler ${Boost_LIBRARIES} ${CPPNETLIB_LIBRARIES})
+include_directories (include ${Boost_INCLUDE_DIR} ${CPPNETLIB_INCLUDE_DIRS} ${gumbo_INCLUDE_DIRS})
 
+add_executable(webcrawler src/web_crawler.cpp src/hrefs_search.cpp src/main.cpp)
 
-
-
+target_link_libraries( webcrawler ${Boost_LIBRARIES} ${CPPNETLIB_LIBRARIES} ${gumbo_LIBRARIES} ssl crypto)
